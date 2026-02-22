@@ -1,0 +1,39 @@
+name: Build API with Bun
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Instalar Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Instalar dependências
+        run: bun install
+        working-directory: packages/api
+
+      - name: Buildar API
+        run: bun run build
+        working-directory: packages/api
+
+      - name: Criar branch production com apenas index.js
+        run: |
+          mkdir deploy
+          cp packages/api/dist/index.js deploy/index.js
+          cd deploy
+          git init
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Deploy API"
+          git branch -M production
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git push -f origin production
