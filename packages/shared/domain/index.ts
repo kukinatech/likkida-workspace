@@ -6,6 +6,7 @@ export * from './entities/User.js'
 export * from './Exceptions/EmailInvalidExeception.js'
 export * from './Exceptions/NifInvalidException.js'
 export * from './Exceptions/RecordNotFoundException.js'
+export * from './Exceptions/BaseErrorForm.js'
 
 export * from './valueObjects/Email.js'
 export * from './valueObjects/IvalueObject.js'

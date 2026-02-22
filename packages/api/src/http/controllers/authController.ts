@@ -1,6 +1,7 @@
 
 import { type Request, type Response } from "express";
 import {
+    BaseErrorForm,
     type IUserRepository,
     LoginUser,
     RegisterUser,
@@ -33,6 +34,10 @@ export async function registerController(req: Request<{}, {}, TCreateUserInputDT
         return res.status(200)
             .json(HttpResponseMapper(false, 'Registro feito com sucesso', response))
     } catch (error: any) {
+        const errors = {}
+        if (error instanceof BaseErrorForm) {
+            Object.assign(errors, { [error.field]: error.message })
+        }
         return res.status(400).json(HttpResponseMapper(true, error.message))
     }
 }

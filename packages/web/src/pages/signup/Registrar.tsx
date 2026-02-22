@@ -20,12 +20,12 @@ export default function Registrar() {
       data.username,
       data.password,
       data.email
-    ).catch(() => {
-
+    ).catch((erro: any) => {
+      console.debug(erro)
     })
-    .finally(() => {
-      setloading(false)
-    })
+      .finally(() => {
+        setloading(false)
+      })
   }
   return (
     <div className="h-full w-full flex justify-center items-center">

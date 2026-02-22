@@ -1,7 +1,7 @@
-import HttpApi from "../../../infrastructure/http/axios";
+import api from "../../../infrastructure/http/axios";
 
 export default class RegisterService {
   async execute(username: string, password: string, email: string): Promise<void> {
-    await HttpApi.post('auth/register', { username, password, email })
+      await api.post('auth/register', { username, password, email })
   }
 }

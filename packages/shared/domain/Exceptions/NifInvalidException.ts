@@ -1,5 +1,7 @@
-export  class NifInvalidException extends Error {
-    constructor() {
-        super('Nif Inválido')
+import { BaseErrorForm } from "./BaseErrorForm";
+
+export class NifInvalidException extends BaseErrorForm {
+    constructor(field: string, message: string = 'Nif Inválido') {
+        super(field, message);
     }
 }

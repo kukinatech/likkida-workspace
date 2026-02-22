@@ -1,8 +1,7 @@
 import axios from "axios";
 console.log(import.meta.env.VITE_API_URL)
-const HttpApi = axios.create({
-  baseURL: "http://localhost:5000/api/",
-  timeout: 1000,
-  headers: { "X-Custom-Header": "foobar" },
+const api = axios.create({
+  baseURL: "https://likkida-workspace.onrender.com/api",
+  timeout: 10000,
 });
-export default HttpApi
+export default api
