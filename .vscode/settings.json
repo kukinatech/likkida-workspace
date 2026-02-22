@@ -1,0 +1,18 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "https://frevksrxxzblgvclwfep.supabase.co",
+            "sshOptions": {
+                "port": 22
+            },
+            "driver": "PostgreSQL",
+            "name": "LikkidaDatabase",
+            "connectString": "postgresql://postgres.frevksrxxzblgvclwfep:Admin@174200@aws-1-eu-north-1.pooler.supabase.com:6543/postgres?pgbouncer=true",
+            "database": "postgres",
+            "username": "postgres"
+        }
+    ],
+    "editor.tabSize": 2
+}
