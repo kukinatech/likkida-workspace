@@ -5,9 +5,9 @@ import '@fontsource-variable/space-grotesk';
 import './index.css'
 import { RouterProvider } from 'react-router';
 import router from './routes/index.tsx';
-import {  CssVarsProvider, GlobalStyles } from '@mui/joy';
+import {  CssVarsProvider, GlobalStyles, Snackbar } from '@mui/joy';
 import theme from './theme.ts';
-
+import { useToast } from './hooks/useToast.ts';
 
 createRoot(document.getElementById('root')!).render(
   <>
@@ -22,7 +22,9 @@ createRoot(document.getElementById('root')!).render(
       }} />
       <CssVarsProvider theme={theme}>
         <RouterProvider router={router}></RouterProvider>
+        
       </CssVarsProvider>
+
     </StrictMode>,
   </>
 )

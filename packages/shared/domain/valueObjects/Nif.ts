@@ -7,7 +7,7 @@ export class Nif implements IValueObject {
         const regexSingular = /^\d{9}[A-Z]{2}\d{3}$/;
 
         if (!(regexEmpresa.test(this.value) || regexSingular.test(this.value))) {
-            throw new NifInvalidException()
+            throw new NifInvalidException('nif')
         }
     }
     get(): string {

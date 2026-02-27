@@ -25,8 +25,6 @@ const router = createBrowserRouter([
         path: 'registrar-empresa',
         element: <RegistrarEmpresa />
       },
-
-
     ]
   },
 ]);

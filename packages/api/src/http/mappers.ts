@@ -1,10 +1,22 @@
+import {
+    BaseErrorForm,
+    type THttpResponse,
+    type TResponseMapperParams
+} from "@likkida/shared"
 
+export function HttpResponseMapper({
+    message,
+    error,
+    data = null
+}: TResponseMapperParams): THttpResponse<any> {
+    const errors: Record<string, string> = {}
 
-export type TResponseMapper = {
-    error: boolean
-    message: string
-    errors: Record<string, string> | null
-}
-export function HttpResponseMapper(error: boolean = false, message: string, response: Object={}) {
-    return { error, message, ...response } as TResponseMapper
+    if (error instanceof BaseErrorForm) {
+        Object.assign(errors, { [error.field]: error.message })
+    }
+    return {
+        message,
+        errors: Object.keys(errors).length > 0 ? errors : null,
+        data
+    }
 }

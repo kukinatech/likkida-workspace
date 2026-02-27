@@ -2,7 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 import config from '../configs/index.js'
-import bootstrap from './routes/routes.js'
+import bootstrap from './bootstrap.js'
 
 const app = express()
 app.use(cors({ origin: config.FRONTEND_URL }))

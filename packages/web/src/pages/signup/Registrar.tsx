@@ -1,31 +1,45 @@
 import { Button, FormControl, FormHelperText, FormLabel, Input } from "@mui/joy";
 import Brand from "../../components/Brand";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import InputEmail from "../../components/InputEmail";
 import InputUsername from "../../components/InputUsername";
 import InputPassword from "../../components/InputPassword";
 import type { TInputs } from "./types/TInputs";
-import RegisterService from "./services/RegisterService";
 import { useState } from "react";
+import type { AxiosError } from "axios";
+import { CreateUserUseCase, type BaseErrorForm, type TCreateUserOutputDTO, type THttpResponse } from "@likkida/shared";
+import { useToast } from "../../hooks/useToast";
+import { UserRepositoryAxios } from "../../infra/repositories/UserRepositoryAxios";
 
-const registerService = new RegisterService()
+const userRepository = new UserRepositoryAxios()
 
 export default function Registrar() {
-  const { register, handleSubmit, formState: { errors } } = useForm<TInputs>()
+  const { register, handleSubmit, setError, formState: { errors } } = useForm<TInputs>()
   const [isLoading, setloading] = useState(false)
-  const onSubmit: SubmitHandler<TInputs> = (data) => {
+  const showToast = useToast((state) => state.show)
+  const navigate = useNavigate()
+  const onSubmit: SubmitHandler<TInputs> = ({ password, email, username }) => {
+    const registerUseCase = new CreateUserUseCase(userRepository)
     setloading(true)
-    registerService.execute(
-      data.username,
-      data.password,
-      data.email
-    ).catch((erro: any) => {
-      console.debug(erro)
-    })
-      .finally(() => {
-        setloading(false)
+    registerUseCase.execute({ username, password, email })
+      .then((data: any) => {
+        const response = data as THttpResponse<TCreateUserOutputDTO>
+          
+        console.debug(response)
+        showToast("Registro realizado com sucesso", { color: "success" })
+        navigate("/login")
       })
+      .catch((erro: AxiosError<{ errors: BaseErrorForm }>) => {
+        showToast("Algo correu mal ao se regitrar", { color: "danger" })
+        if (!erro.response?.data?.errors) return;
+        Object
+          .entries(erro.response?.data?.errors)
+          .forEach(([field, message]) => {
+            setError(field as any, { message })
+          })
+      })
+      .finally(() => { setloading(false) })
   }
   return (
     <div className="h-full w-full flex justify-center items-center">

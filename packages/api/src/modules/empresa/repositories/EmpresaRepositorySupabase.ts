@@ -1,5 +1,10 @@
-import supabase from "../databases/supabase";
-import type { IEmpresaRepository, TCreateEmpresaInputDTO, TEmpresa } from "@likkida/shared";
+import supabase from "../../../databases/supabase";
+import type {
+    IEmpresaRepository,
+    TCreateEmpresaInputDTO,
+    TEmpresa,
+    TCreateEmpresaOutputDTO
+} from "@likkida/shared";
 
 export class EmpresaRepositorySupabase implements IEmpresaRepository {
     findByNif(nif: string): Promise<TEmpresa | null> {
@@ -25,8 +30,8 @@ export class EmpresaRepositorySupabase implements IEmpresaRepository {
             nif: data.nif,
         }
     }
-    async create(data: TCreateEmpresaInputDTO): Promise<void> {
-        const { error } = await supabase.from('empresas')
+    async create(data: TCreateEmpresaInputDTO): Promise<TCreateEmpresaOutputDTO> {
+        const { error, data: empresa } = await supabase.from('empresas')
             .insert({
                 nome: data.nome,
                 nif: data.nif,
@@ -35,9 +40,20 @@ export class EmpresaRepositorySupabase implements IEmpresaRepository {
                 contactos: data.contactos,
                 logo_url: data.logoUrl
             })
+            .select()
+            .single()
 
         if (error) {
             throw new Error('Erro ao criar empresa: ' + error.message)
+        }
+        return {
+            id: empresa.id,
+            nome: empresa.nome,
+            nif: empresa.nif,
+            email: empresa.email,
+            endereco: empresa.endereco ?? '',
+            contactos: empresa.contactos ?? [],
+            logoUrl: empresa.logo_url
         }
     }
 }

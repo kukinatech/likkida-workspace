@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import supabaseClient from '../../databases/supabase.js'
 import jwt from 'jsonwebtoken'
 import config from '../../configs/index.js';
@@ -29,22 +29,35 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         const hastString = req.headers.authorization
         console.log(hastString)
         if (!hastString) {
-            return res.status(401).json(HttpResponseMapper(true, "Não aoutorizado!"))
+            return res.status(401).json(
+                HttpResponseMapper({ isError: true, message: "Não aoutorizado!" })
+            )
         }
         const hastStringSplited = hastString.split(' ');
 
         if (hastStringSplited.length !== 2) {
-            return res.status(401).json(HttpResponseMapper(true, "Token mal Formadodo!"))
+            return res.status(401).json(
+                HttpResponseMapper({ isError: true, message: "Token mal Formadodo!" })
+            )
         }
 
         const [flag, token] = hastStringSplited
 
         if (flag !== 'Bearer') {
-            return res.status(401).json(HttpResponseMapper(true, "Token mal Formadodo!"))
+            return res.status(401).json(
+                HttpResponseMapper({ isError: true, message: "Token mal Formadodo!" })
+            )
+        }
+
+        if (!token) {
+            return res.status(401).json(
+                HttpResponseMapper({ isError: true, message: "Token mal Formadodo!" })
+            )
         }
         console.log(config.SUPABASE_KEY)
 
         const decoded = jwt.verify(token, config.SUPABASE_JWT_SECRET!) as JwtPayload;
+
         req.user = {
             id: decoded.sub,
             token: token,
@@ -53,6 +66,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         next();
 
     } catch (error: any) {
-        return res.status(401).json(HttpResponseMapper(true, "Não aoutorizado!"))
+        return res.status(401).json(HttpResponseMapper({ isError: true, message: "Não aoutorizado!" }))
     }
 }

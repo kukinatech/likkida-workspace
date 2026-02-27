@@ -7,7 +7,7 @@
   "scripts": {
     "start:node": "node ./dist/index.js",
     "start:node-w": "node ./dist/index.js --watch",
-    "dev": "bun ./index.ts --watch",
+    "dev": "bun --watch ./index.ts ",
     "start:bun": "bun ./dist/index.js",
     "build": "bun build ./index.ts --outdir ./dist --target node --minify",
     "build:compile": "bun build ./index.ts --target node --compile",

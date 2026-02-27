@@ -1,5 +1,5 @@
-import type { IUserRepository, TCreateUserInputDTO, TCreateUserOutputDTO, TLoginUserOutputDTO } from "@likkida/shared";
-import supabase from "../databases/supabase";
+import type { IUserRepository, TCreateUserInputDTO, TCreateUserOutputDTO } from "@likkida/shared";
+import supabase from "../../../databases/supabase";
 
 
 export class UserRepositorySupabase implements IUserRepository {
@@ -8,11 +8,8 @@ export class UserRepositorySupabase implements IUserRepository {
             .from("users")
             .select()
             .eq("id", id);
-
         if (error) { throw new Error(error.message) }
-
         const [userFinded] = data
-
         const response = userFinded ? {
             id: userFinded.id,
             email: userFinded.email,
@@ -44,7 +41,7 @@ export class UserRepositorySupabase implements IUserRepository {
         const { error, data } = await supabase
             .from("users")
             .select()
-            .eq("email", email);
+            .eq("email", email)
 
         if (error) { throw new Error(error.message) }
 
@@ -56,13 +53,5 @@ export class UserRepositorySupabase implements IUserRepository {
             username: userFinded.username
         } : null
         return response
-    }
-    async login(email: string, password: string): Promise<TLoginUserOutputDTO> {
-        const { error, data } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) { throw new Error(error.message) }
-        return {
-            token: data.session.access_token,
-            type_token: data.session.token_type
-        }
     }
 }

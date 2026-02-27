@@ -1,11 +1,11 @@
 import { type IEmpresaRepository } from "../../adapters/index.js";
-import { Empresa, type TCreateEmpresaInputDTO } from "../../domain/index.js";
+import { Empresa, type TCreateEmpresaInputDTO, type TCreateEmpresaOutputDTO } from "../../domain/index.js";
 
 export class CreateEmpresa {
     constructor(private empresaRepository: IEmpresaRepository) { }
-    async execute(dataDTO: TCreateEmpresaInputDTO): Promise<void> {
+    async execute(dataDTO: TCreateEmpresaInputDTO): Promise<TCreateEmpresaOutputDTO> {
         const empresa = new Empresa(dataDTO)
-        await this.empresaRepository.create({
+        const response = await this.empresaRepository.create({
             nome: empresa.nome,
             nif: empresa.nif.get(),
             email: empresa.email.get(),
@@ -13,5 +13,6 @@ export class CreateEmpresa {
             contactos: empresa.contactos,
             logoUrl: empresa.logoUrl
         })
+        return response
     }
 }
