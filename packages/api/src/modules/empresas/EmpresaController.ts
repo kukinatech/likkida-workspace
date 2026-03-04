@@ -2,7 +2,7 @@ import { type Request, type Response } from "express"
 import { HttpResponseMapper } from "../../http/mappers.js"
 import { CreateEmpresaUseCase, type IEmpresaRepository, type IFuncionarioRepository, type IUserRepository, type TCreateEmpresaInputDTO } from "@likkida/shared";
 import { EmpresaRepositorySupabase } from "./repositories/EmpresaRepositorySupabase.js";
-import { UserRepositorySupabase } from "../user/repositories/UserRepositorySupabase.js";
+import { UserRepositorySupabase } from "../users/repositories/UserRepositorySupabase.js";
 import { FuncionarioRepositorySupabase } from "../../repositories/FuncionarioRepositorySupabase.js";
 
 const empresaRepository: IEmpresaRepository = new EmpresaRepositorySupabase();

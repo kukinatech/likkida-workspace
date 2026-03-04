@@ -1,6 +1,6 @@
 import axios from "axios";
 const axio = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://likkida-workspace.onrender.com/api",
   timeout: 10000,
   withCredentials: true
 });

@@ -3,9 +3,9 @@
 import { fakerPT_PT as faker } from "@faker-js/faker";
 import { CreateEmpresaUseCase, Empresa, NifInvalidException, type TCreateEmpresaInputDTO } from "@likkida/shared";
 import { describe, expect, test, vi, beforeEach } from "vitest";
-import { EmpresaRepositorySupabase } from "../modules/empresa/repositories/EmpresaRepositorySupabase.js";
+import { EmpresaRepositorySupabase } from "../modules/empresas/repositories/EmpresaRepositorySupabase.js";
 import { FuncionarioRepositorySupabase } from "../repositories/FuncionarioRepositorySupabase.js";
-import { UserRepositorySupabase } from "../modules/user/repositories/UserRepositorySupabase.js";
+import { UserRepositorySupabase } from "../modules/users/repositories/UserRepositorySupabase.js";
 
 
 const generateNifEmpresa = () => (

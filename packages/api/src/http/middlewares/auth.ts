@@ -31,7 +31,6 @@ declare global {
 export const auth = (req: Request, res: Response, next: NextFunction) => {
     try {
         const hastString = req.cookies.token
-        console.log(hastString)
 
         if (!hastString) {
             return res.status(401).json(

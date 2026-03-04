@@ -1,10 +1,10 @@
 import { CreateEmpresaUseCase } from "@likkida/shared";
 import supabase from "./supabase";
 import { AuthProviderSupabase } from "../modules/auth/providers/AuthProviderSupabase";
-import { EmpresaRepository } from "../modules/empresa/repositories/EmpresaRepository";
+import { EmpresaRepository } from "../modules/empresas/repositories/EmpresaRepository";
 import { FuncionarioRepositorySupabase } from "../repositories/FuncionarioRepositorySupabase";
-import { EmpresaRepositorySupabase } from "../modules/empresa/repositories/EmpresaRepositorySupabase";
-import { UserRepositorySupabase } from "../modules/user/repositories/UserRepositorySupabase";
+import { EmpresaRepositorySupabase } from "../modules/empresas/repositories/EmpresaRepositorySupabase";
+import { UserRepositorySupabase } from "../modules/users/repositories/UserRepositorySupabase";
 seedDatabase()
 
 export async function seedDatabase() {

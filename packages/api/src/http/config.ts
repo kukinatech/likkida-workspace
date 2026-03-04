@@ -29,17 +29,17 @@ const ROUTES_PATH = join(process.cwd(), "src/modules");
 
 export const loadRouteRoot = async (route: TBaseRoute, expressRouter: Router) => {
   let endpointRoot;
-  let __moduleName;
   try {
     const { endepointPlural, endpoint } = route.options ?? {};
     const module = await route.importPath();
-    endpointRoot = endpoint ? endpoint :
-      getModuleEndpointRoot(route.moduleName, endepointPlural)
+    endpointRoot = endpoint ? endpoint : getModuleEndpointRoot(route.moduleName, endepointPlural)
     expressRouter.use(endpointRoot, module.default);
     console.log(`[+] Load route ${endpointRoot} | Module [${route.moduleName}]`)
+     
   } catch (error: any) {
-    console.error(`Erro load route ${endpointRoot ?? '[?]'} | Module [${__moduleName}]`, error.message)
+    console.error(`Erro load route ${endpointRoot ?? '[?]'} | Module [${route.moduleName}]`, error.message)
   }
+
 }
 export function bootstrap(callback: (app: Express, apiRouter: Router) => Record<string, TOptionRoute> | undefined) {
   return async (app: Express) => {
@@ -51,8 +51,27 @@ export function bootstrap(callback: (app: Express, apiRouter: Router) => Record<
         importPath,
         options: options ? options[moduleName] : {}
       }
-      loadRouteRoot(route, apiRouter)
+      loadRouteRoot(route, apiRouter) 
+    
     }
-    app.use('/api', apiRouter);
+    listRoutes(apiRouter)
+    app.use('/api', apiRouter); 
   }
+}
+
+
+export function listRoutes(router: Router) {
+  router.stack.forEach((layer: any) => {
+    if (layer.route) {
+      const methods = Object.keys(layer.route.methods).join(', ').toUpperCase()
+      console.log(`[${methods}] ${layer.route.path}`)
+    } else if (layer.name === 'router' && layer.handle.stack) {
+      layer.handle.stack.forEach((subLayer: any) => {
+        if (subLayer.route) {
+          const methods = Object.keys(subLayer.route.methods).join(', ').toUpperCase()
+          console.log(`[${methods}] ${layer.regexp} ${subLayer.route.path}`)
+        }
+      })
+    }
+  })
 }

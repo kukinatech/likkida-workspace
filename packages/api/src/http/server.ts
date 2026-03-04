@@ -4,7 +4,11 @@ import cors from 'cors'
 import config from '../configs/index.js'
 import bootstrap from './bootstrap.js'
 import cookieParser from 'cookie-parser'
+import morgan from 'morgan'
+
 const app = express()
+
+app.use(morgan('dev'))
 app.use(cors({
     origin: [config.FRONTEND_URL, 'http://localhost:4173'],
     credentials: true

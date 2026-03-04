@@ -20,7 +20,6 @@ function findRouteFiles(dir: string): string[] {
 }
 
 const routeFiles = findRouteFiles(MODULES_PATH)
-console.log(routeFiles)
 
 const imports = routeFiles.map((file) => {
   // ./src/modules/auth/AuthRoutes.ts → ./modules/auth/AuthRoutes
@@ -32,7 +31,6 @@ const imports = routeFiles.map((file) => {
 
   return { moduleName, importPath }
 })
-console.log(imports)
 const content = `// AUTO-GENERATED — não editar manualmente
 // gerado em: ${new Date().toISOString()}
 
@@ -44,7 +42,6 @@ ${imports.map(({ moduleName, importPath }) =>
 
 export default routeModules
 `
-console.log(content)
 writeFileSync(OUTPUT_FILE, content)
 console.log(`[+] routes.ts gerado com ${imports.length} rotas:`)
 imports.forEach(({ moduleName, importPath }) => {
