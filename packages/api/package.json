@@ -9,7 +9,7 @@
     "start:node-w": "node ./dist/index.js --watch",
     "dev": "bun --watch ./index.ts ",
     "start:bun": "bun ./dist/index.js",
-    "build": "bun build src/index.ts --outdir ./dist --target node --minify",
+    "build": "bun build ./index.ts --outdir ./dist --target node --minify",
     "build:compile": "bun build ./index.ts --target node --compile",
     "build:watch": "bun build ./index.ts --outdir ./dist --target node --minify --watch",
     "test": "vitest",
