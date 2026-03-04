@@ -3,15 +3,17 @@ import { Router, type Express } from 'express'
 import { existsSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import routeModules from './routes'
 
-export type TBaseRoute = {
-  moduleName?: string
-  endpoint?: string
+
+export type TOptionRoute = {
+  endpoint?: string;
   endepointPlural?: boolean
 }
-export type TBaseRoutesOption = Record<string, TBaseRoute>;
-type TOptionsBootstrap = {
-  routes?: TBaseRoutesOption
+export type TBaseRoute = {
+  moduleName: string
+  importPath: () => Promise<any>
+  options: TOptionRoute | undefined
 }
 
 export const getModuleName = (file: string) => {
@@ -25,40 +27,31 @@ export const getModuleEndpointRoot = (moduleName: string, plural: boolean = true
 
 const ROUTES_PATH = join(process.cwd(), "src/modules");
 
-export const loadRouteRoot = async (filePath: string, routes: Record<string, TBaseRoute>, expressRouter: Router) => {
+export const loadRouteRoot = async (route: TBaseRoute, expressRouter: Router) => {
   let endpointRoot;
   let __moduleName;
   try {
-    const moduleName = getModuleName(filePath)!
-    __moduleName = moduleName
-    const options = routes[moduleName]
-    const modulePath = pathToFileURL(join(ROUTES_PATH, filePath)).href;
-    const module = await import(modulePath);
-
-    let endpointRoot = options?.endpoint ?
-      options?.endpoint :
-      getModuleEndpointRoot(moduleName, options?.endepointPlural)
+    const { endepointPlural, endpoint } = route.options ?? {};
+    const module = await route.importPath();
+    endpointRoot = endpoint ? endpoint :
+      getModuleEndpointRoot(route.moduleName, endepointPlural)
     expressRouter.use(endpointRoot, module.default);
-    console.log(`[+] Load route ${endpointRoot} | Module [${moduleName}]`)
-
+    console.log(`[+] Load route ${endpointRoot} | Module [${route.moduleName}]`)
   } catch (error: any) {
     console.error(`Erro load route ${endpointRoot ?? '[?]'} | Module [${__moduleName}]`, error.message)
   }
 }
-export function bootstrap(callback: (app: Express, apiRouter: Router) => TOptionsBootstrap | undefined) {
+export function bootstrap(callback: (app: Express, apiRouter: Router) => Record<string, TOptionRoute> | undefined) {
   return async (app: Express) => {
     const apiRouter = Router()
     const options = callback(app, apiRouter)
-
-
-    if (!existsSync(ROUTES_PATH)) {
-      console.error('Directory src/modules not found.')
-    }
-    const files = (existsSync(ROUTES_PATH) ?
-      readdirSync(ROUTES_PATH, { recursive: true, encoding: 'utf-8' }) : ([] as string[]))
-      .filter(path => path.endsWith("Routes.js") || path.endsWith("Routes.ts"));
-    for (const file of files) {
-      loadRouteRoot(file, options?.routes ?? {}, apiRouter)
+    for (const [moduleName, importPath] of Object.entries(routeModules)) {
+      const route = {
+        moduleName,
+        importPath,
+        options: options ? options[moduleName] : {}
+      }
+      loadRouteRoot(route, apiRouter)
     }
     app.use('/api', apiRouter);
   }
