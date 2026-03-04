@@ -9,3 +9,8 @@ export type THttpResponse<T> = {
   errors: Record<string, string> | null
   data: T
 }
+
+// export type THttpResponseError<T> {
+//   message: string
+//   errors: Record<string, string> | null
+// }

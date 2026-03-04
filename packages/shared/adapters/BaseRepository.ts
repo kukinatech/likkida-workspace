@@ -1,4 +1,3 @@
-import type { THttpResponse } from "../types";
 
 export interface IBaseRepository<T, K> {
     findById(id: string): Promise<K | null>;

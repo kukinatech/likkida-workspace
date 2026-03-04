@@ -1,1 +1,1 @@
-export * from './CreateEmpresa.js'
+export * from './CreateEmpresaUseCase.js'

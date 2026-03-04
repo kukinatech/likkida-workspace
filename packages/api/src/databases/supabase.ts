@@ -7,3 +7,8 @@ export default createClient<Database>(
   config.SUPABASE_URL,
   config.SUPABASE_KEY
 );
+
+// npx supabase gen types typescript \ 
+//   --project-id frevksrxxzblgvclwfep \
+//   --schema public \
+//   > src/types/supabase.d.ts 

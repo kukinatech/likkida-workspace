@@ -29,8 +29,7 @@ export const useToast = create<TToastState & TToastActions>((set) => ({
   }
 }))
 
-export function desfragmentToast() {
-  console.debug(useToast())
+export function useDesfragmentedToast() {
   return ({
     openToast: useToast((state) => state.open),
     hideToast: useToast((state) => state.hide),

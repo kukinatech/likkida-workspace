@@ -18,7 +18,7 @@ export type Database = {
         Row: {
           artigo_id: string | null
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           documento_fiscal_id: string
           id: string
           quantidade: number | null
@@ -26,7 +26,7 @@ export type Database = {
         Insert: {
           artigo_id?: string | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           documento_fiscal_id?: string
           id?: string
           quantidade?: number | null
@@ -34,7 +34,7 @@ export type Database = {
         Update: {
           artigo_id?: string | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           documento_fiscal_id?: string
           id?: string
           quantidade?: number | null
@@ -58,28 +58,31 @@ export type Database = {
       }
       artigos: {
         Row: {
-          artigo_tipo_id: string | null
+          artigo_tipo_id: string
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           descricao: string | null
+          empresa_id: string
           id: string
           nome: string
           preco: number | null
         }
         Insert: {
-          artigo_tipo_id?: string | null
+          artigo_tipo_id: string
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao?: string | null
+          empresa_id: string
           id?: string
           nome: string
           preco?: number | null
         }
         Update: {
-          artigo_tipo_id?: string | null
+          artigo_tipo_id?: string
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao?: string | null
+          empresa_id?: string
           id?: string
           nome?: string
           preco?: number | null
@@ -92,35 +95,54 @@ export type Database = {
             referencedRelation: "artigos_tipo"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "artigos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
         ]
       }
       artigos_tipo: {
         Row: {
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           descricao: string
+          empresa_id: string
           id: string
         }
         Insert: {
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao: string
+          empresa_id: string
           id?: string
         }
         Update: {
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao?: string
+          empresa_id?: string
           id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "artigos_tipo_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       clientes: {
         Row: {
           contactos: string[] | null
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           email: string | null
+          empresa_id: string
           endereco: string | null
           id: string
           nif: string
@@ -129,8 +151,9 @@ export type Database = {
         Insert: {
           contactos?: string[] | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           email?: string | null
+          empresa_id: string
           endereco?: string | null
           id?: string
           nif: string
@@ -139,21 +162,30 @@ export type Database = {
         Update: {
           contactos?: string[] | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           email?: string | null
+          empresa_id?: string
           endereco?: string | null
           id?: string
           nif?: string
           nome?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "clientes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       documentos_fiscal: {
         Row: {
           cliente_id: string
           created_at: string
           data_emissao: string | null
-          deleted_at: boolean | null
+          deleted_at: string | null
           desconto: number | null
           documento_tipo: Database["public"]["Enums"]["documento_tipo"]
           empresa_id: string
@@ -167,13 +199,13 @@ export type Database = {
           total: number | null
         }
         Insert: {
-          cliente_id?: string
+          cliente_id: string
           created_at?: string
           data_emissao?: string | null
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           desconto?: number | null
           documento_tipo: Database["public"]["Enums"]["documento_tipo"]
-          empresa_id?: string
+          empresa_id: string
           estado?:
             | Database["public"]["Enums"]["documento_fiscal_estados"]
             | null
@@ -189,7 +221,7 @@ export type Database = {
           cliente_id?: string
           created_at?: string
           data_emissao?: string | null
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           desconto?: number | null
           documento_tipo?: Database["public"]["Enums"]["documento_tipo"]
           empresa_id?: string
@@ -232,7 +264,7 @@ export type Database = {
         Row: {
           contactos: string[] | null
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           email: string
           endereco: string | null
           id: string
@@ -243,7 +275,7 @@ export type Database = {
         Insert: {
           contactos?: string[] | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           email: string
           endereco?: string | null
           id?: string
@@ -254,7 +286,7 @@ export type Database = {
         Update: {
           contactos?: string[] | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           email?: string
           endereco?: string | null
           id?: string
@@ -268,7 +300,7 @@ export type Database = {
         Row: {
           activo: boolean | null
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           empresa_id: string
           funcao: string | null
           id: string
@@ -277,7 +309,7 @@ export type Database = {
         Insert: {
           activo?: boolean | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           empresa_id?: string
           funcao?: string | null
           id?: string
@@ -286,7 +318,7 @@ export type Database = {
         Update: {
           activo?: boolean | null
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           empresa_id?: string
           funcao?: string | null
           id?: string
@@ -303,7 +335,7 @@ export type Database = {
           {
             foreignKeyName: "funcionarios_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: true
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
@@ -312,22 +344,25 @@ export type Database = {
       moedas: {
         Row: {
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           descricao: string | null
+          empresa_id: string
           id: string
           simbol: string
         }
         Insert: {
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao?: string | null
+          empresa_id: string
           id?: string
           simbol: string
         }
         Update: {
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao?: string | null
+          empresa_id?: string
           id?: string
           simbol?: string
         }
@@ -336,57 +371,249 @@ export type Database = {
       pagamentos_tipo: {
         Row: {
           created_at: string
-          deleted_at: boolean | null
+          deleted_at: string | null
           descricao: string | null
+          empresa_id: string
           id: string
         }
         Insert: {
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao?: string | null
+          empresa_id: string
           id?: string
         }
         Update: {
           created_at?: string
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           descricao?: string | null
+          empresa_id?: string
           id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "pagamentos_tipo_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      permissoes: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+        }
         Relationships: []
+      }
+      role_permissoes: {
+        Row: {
+          delete_at: string | null
+          id: string
+          permissao_id: string
+          roles_id: string
+        }
+        Insert: {
+          delete_at?: string | null
+          id?: string
+          permissao_id: string
+          roles_id: string
+        }
+        Update: {
+          delete_at?: string | null
+          id?: string
+          permissao_id?: string
+          roles_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissoes_permissao_id_fkey"
+            columns: ["permissao_id"]
+            isOneToOne: false
+            referencedRelation: "permissoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissoes_roles_id_fkey"
+            columns: ["roles_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roles_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_permissoes: {
+        Row: {
+          delete_at: string | null
+          id: string
+          permissao_id: string
+          user_id: string
+        }
+        Insert: {
+          delete_at?: string | null
+          id?: string
+          permissao_id: string
+          user_id: string
+        }
+        Update: {
+          delete_at?: string | null
+          id?: string
+          permissao_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_permissoes_permissao_id_fkey"
+            columns: ["permissao_id"]
+            isOneToOne: false
+            referencedRelation: "permissoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_permissoes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          delete_at: string | null
+          id: string
+          role_id: string
+          user_id: string
+        }
+        Insert: {
+          delete_at?: string | null
+          id?: string
+          role_id: string
+          user_id: string
+        }
+        Update: {
+          delete_at?: string | null
+          id?: string
+          role_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_roles_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
           created_at: string | null
-          deleted_at: boolean | null
+          deleted_at: string | null
           email: string
+          empresa_id: string
           id: string
           updated_at: string | null
           username: string
         }
         Insert: {
           created_at?: string | null
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           email: string
+          empresa_id: string
           id?: string
           updated_at?: string | null
           username: string
         }
         Update: {
           created_at?: string | null
-          deleted_at?: boolean | null
+          deleted_at?: string | null
           email?: string
+          empresa_id?: string
           id?: string
           updated_at?: string | null
           username?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      custom_access_token_hook: { Args: { event: Json }; Returns: Json }
     }
     Enums: {
       documento_fiscal_estados: "RASCUNHO" | "EMITIDO" | "ANULADO"

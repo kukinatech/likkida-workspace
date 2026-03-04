@@ -2,13 +2,17 @@ import { type IFuncionarioRepository } from "../../adapters/FuncionarioRepositor
 import { type IUserRepository } from "../../adapters/UserRepository.js";
 import { type Entidade } from "../../domain/entities/Entidade.js";
 import { RecordNotFoundException } from "../../domain/Exceptions/RecordNotFoundException.js";
+import type { TCreateUserOutputDTO, TFuncionario} from "../../domain/index.js";
 
 export class AddUserToFuncionario {
     constructor(
         private FuncionarioRepository: IFuncionarioRepository,
-        private UserRepository: IUserRepository,
+        private UserRepository?: IUserRepository,
     ) { }
-    async execute(funcionario: Entidade, user: Entidade) {
+    async executeByEntity(funcionario: Entidade, user: Entidade) {
+        if (!this.UserRepository) {
+            throw new Error('Erro ao adicionar usuário ao funcionário');
+        }
         const findUser = await this.UserRepository.findById(user.id)
         if (!findUser) {
             throw new RecordNotFoundException('Usuário')
@@ -21,5 +25,12 @@ export class AddUserToFuncionario {
             throw new Error('Este funcionário está desativado.')
         }
         await this.FuncionarioRepository.update(funcionario.id, { user: findUser })
+    }
+    async execute(funcionario: TFuncionario, user: TCreateUserOutputDTO) {
+
+        if (!funcionario.activo) {
+            throw new Error('Este funcionário está desativado.')
+        }
+        await this.FuncionarioRepository.update(funcionario.id, { user })
     }
 }

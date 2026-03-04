@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { userGetMeController, userGetAllController } from "./UserController.js";
-import { authMiddleware } from "../../http/middlewares/auth.js";
+import { auth } from "../../http/middlewares/auth.js";
 
 const userRouter: Router = Router()
 userRouter.get('/', userGetAllController);
-userRouter.get('/me', authMiddleware, userGetMeController)
+userRouter.get('/me', [auth], userGetMeController)
 
 export default userRouter;

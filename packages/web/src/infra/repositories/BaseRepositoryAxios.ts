@@ -1,5 +1,5 @@
 import type { IBaseRepository } from "@likkida/shared";
-import axios from "axios";
+import axios from "../http/axios";
 
 export default abstract class BaseRepositoryAxios<T, K> implements IBaseRepository<T, K> {
   constructor(private baseUrl: string) { }

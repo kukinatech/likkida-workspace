@@ -8,29 +8,39 @@ import InputPassword from "../../components/InputPassword";
 import type { TInputs } from "./types/TInputs";
 import { useState } from "react";
 import type { AxiosError } from "axios";
-import { CreateUserUseCase, type BaseErrorForm, type TCreateUserOutputDTO, type THttpResponse } from "@likkida/shared";
+import type { BaseErrorForm, TCreateUserOutputDTO, THttpResponse } from "@likkida/shared";
 import { useToast } from "../../hooks/useToast";
-import { UserRepositoryAxios } from "../../infra/repositories/UserRepositoryAxios";
+import { RegisterService } from "./services/RegisterService";
+import { AuthProviderAxios } from "../../infra/providers/AuthProvider";
 
-const userRepository = new UserRepositoryAxios()
+const authProvider = new AuthProviderAxios()
 
 export default function Registrar() {
   const { register, handleSubmit, setError, formState: { errors } } = useForm<TInputs>()
   const [isLoading, setloading] = useState(false)
   const showToast = useToast((state) => state.show)
   const navigate = useNavigate()
+
   const onSubmit: SubmitHandler<TInputs> = ({ password, email, username }) => {
-    const registerUseCase = new CreateUserUseCase(userRepository)
     setloading(true)
-    registerUseCase.execute({ username, password, email })
+    const register = new RegisterService(authProvider)
+    register.execute({
+      username,
+      password,
+      email,
+      empresa: {
+        id: 'bfde5d21-4281-47c3-8337-3dd981faac4c'
+      }
+    })
       .then((data: any) => {
         const response = data as THttpResponse<TCreateUserOutputDTO>
-          
+
         console.debug(response)
         showToast("Registro realizado com sucesso", { color: "success" })
         navigate("/login")
       })
       .catch((erro: AxiosError<{ errors: BaseErrorForm }>) => {
+        console.debug(erro.response)
         showToast("Algo correu mal ao se regitrar", { color: "danger" })
         if (!erro.response?.data?.errors) return;
         Object

@@ -6,6 +6,9 @@ import { type IUserRepository } from "@likkida/shared";
 const userRepository: IUserRepository = new UserRepositorySupabase();
 export const userGetMeController = async (req: Request, res: Response) => {
   try {
+    console.log(
+      req.user
+    )
     const userId = req.user!.id
     const response = await userRepository.findById(userId)
     if (!response) {
@@ -15,7 +18,7 @@ export const userGetMeController = async (req: Request, res: Response) => {
     }
     return res.status(200).json(HttpResponseMapper({
       message: 'User acessado',
-      data: response
+      data: { ...response, ...req.user }
     }))
   } catch (error: any) {
     return res.status(400).json(

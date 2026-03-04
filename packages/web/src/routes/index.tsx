@@ -1,32 +1,18 @@
 import { createBrowserRouter } from "react-router";
-import App from "../App";
 import PublicLayout from "../layouts/PublicLayout";
-import RegistrarEmpresa from "../pages/empresa/RegistrarEmpresa";
-import Login from "../pages/login/Login";
-import Registrar from "../pages/signup/Registrar";
+import PrivateLayout from "../layouts/PrivateLayout";
+import publicRoutes from "./publicRoutes";
+import privateRoutes from "./privateRoutes";
 
 const router = createBrowserRouter([
   {
     element: <PublicLayout />,
-    children: [
-      {
-        path: '',
-        element: <App />
-      },
-      {
-        path: 'login',
-        element: <Login />
-      },
-      {
-        path: 'registrar',
-        element: <Registrar />
-      },
-      {
-        path: 'registrar-empresa',
-        element: <RegistrarEmpresa />
-      },
-    ]
+    children: publicRoutes
   },
+  {
+    element: <PrivateLayout />,
+    children: privateRoutes
+  }
 ]);
 
 export default router

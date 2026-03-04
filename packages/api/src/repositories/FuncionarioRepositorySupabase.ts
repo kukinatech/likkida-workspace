@@ -1,18 +1,30 @@
-import { IFuncionarioRepository, TCreateFuncionarioInputDTO, TFuncionario, TUpdateFuncionarioInputDTO } from "@likkida/shared";
+import type { IFuncionarioRepository, TCreateFuncionarioInputDTO, TFuncionario, TUpdateFuncionarioInputDTO } from "@likkida/shared";
 import supabase from "../databases/supabase";
 
 export class FuncionarioRepositorySupabase implements IFuncionarioRepository {
-    async create(data: TCreateFuncionarioInputDTO): Promise<void> {
-        const { error } = await supabase.from('funcionarios')
+    async create(data: TCreateFuncionarioInputDTO): Promise<TFuncionario> {
+        const { data: funcionario, error } = await supabase.from('funcionarios')
             .insert({
                 activo: data.activo ?? true,
                 empresa_id: data.empresa.id,
                 funcao: data.funcao,
                 user_id: data.user?.id ?? null
             })
-        
+            .select()
+            .maybeSingle()
+
         if (error) {
             throw new Error('Erro ao criar funcionario: ' + error.message)
+        }
+        if (!funcionario) {
+            throw new Error('Erro ao criar funcionario ')
+        }
+        return {
+            id: funcionario.id,
+            activo: !!funcionario.activo,
+            empresa: { id: funcionario.id },
+            funcao: funcionario.funcao ?? '',
+            user: funcionario.user_id ? { id: funcionario.user_id } : null
         }
     }
     async update(id: string, data: TUpdateFuncionarioInputDTO): Promise<void> {
@@ -24,7 +36,7 @@ export class FuncionarioRepositorySupabase implements IFuncionarioRepository {
                 user_id: data.user?.id ?? undefined
             })
             .eq('id', id)
-        
+
         if (error) {
             throw new Error('Erro ao atualizar funcionario: ' + error.message)
         }

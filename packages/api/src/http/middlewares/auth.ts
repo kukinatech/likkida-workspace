@@ -3,12 +3,15 @@ import supabaseClient from '../../databases/supabase.js'
 import jwt from 'jsonwebtoken'
 import config from '../../configs/index.js';
 import { HttpResponseMapper } from '../mappers.js';
+import type { Entidade, TEmpresa } from '@likkida/shared';
 /// <reference path="./types/express.d.ts" />
 
 
 interface JwtPayload {
     sub: string;
     role: string;
+    empresa_id: string;
+    email: string
 }
 
 declare global {
@@ -16,28 +19,30 @@ declare global {
         interface Request {
             user?: {
                 id: string;
-                role: string;
-                token: string;
+                email: string;
+                empresa: Entidade;
+                roles: Array<string>
+                permissoes: Array<string>
             };
         }
     }
 }
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const auth = (req: Request, res: Response, next: NextFunction) => {
     try {
-
-        const hastString = req.headers.authorization
+        const hastString = req.cookies.token
         console.log(hastString)
+
         if (!hastString) {
             return res.status(401).json(
-                HttpResponseMapper({ isError: true, message: "Não aoutorizado!" })
+                HttpResponseMapper({ message: "Não aoutorizado!" })
             )
         }
         const hastStringSplited = hastString.split(' ');
 
         if (hastStringSplited.length !== 2) {
             return res.status(401).json(
-                HttpResponseMapper({ isError: true, message: "Token mal Formadodo!" })
+                HttpResponseMapper({ message: "Token mal Formadodo!" })
             )
         }
 
@@ -45,27 +50,25 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 
         if (flag !== 'Bearer') {
             return res.status(401).json(
-                HttpResponseMapper({ isError: true, message: "Token mal Formadodo!" })
+                HttpResponseMapper({ message: "Token mal Formadodo!" })
             )
         }
-
         if (!token) {
             return res.status(401).json(
-                HttpResponseMapper({ isError: true, message: "Token mal Formadodo!" })
+                HttpResponseMapper({ message: "Token mal Formadodo!" })
             )
         }
-        console.log(config.SUPABASE_KEY)
-
         const decoded = jwt.verify(token, config.SUPABASE_JWT_SECRET!) as JwtPayload;
-
         req.user = {
             id: decoded.sub,
-            token: token,
-            role: 'NORMAL'
+            empresa: { id: decoded.empresa_id },
+            email: decoded.email,
+            roles: [],
+            permissoes: []
         }
         next();
 
     } catch (error: any) {
-        return res.status(401).json(HttpResponseMapper({ isError: true, message: "Não aoutorizado!" }))
+        return res.status(401).json(HttpResponseMapper({ message: "Não aoutorizado!" }))
     }
 }

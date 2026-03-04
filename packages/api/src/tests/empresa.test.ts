@@ -1,9 +1,11 @@
 
 
 import { fakerPT_PT as faker } from "@faker-js/faker";
-import { CreateEmpresa, Empresa, NifInvalidException, type TCreateEmpresaInputDTO } from "@likkida/shared";
+import { CreateEmpresaUseCase, Empresa, NifInvalidException, type TCreateEmpresaInputDTO } from "@likkida/shared";
 import { describe, expect, test, vi, beforeEach } from "vitest";
-import { EmpresaRepositorySupabase } from "../repositories/EmpresaRepositorySupabase.js";
+import { EmpresaRepositorySupabase } from "../modules/empresa/repositories/EmpresaRepositorySupabase.js";
+import { FuncionarioRepositorySupabase } from "../repositories/FuncionarioRepositorySupabase.js";
+import { UserRepositorySupabase } from "../modules/user/repositories/UserRepositorySupabase.js";
 
 
 const generateNifEmpresa = () => (
@@ -12,7 +14,7 @@ const generateNifEmpresa = () => (
 const generateNifSingular = () => (`${faker.helpers.replaceSymbols('#########??###')}`)
 
 describe('TESTES DE USECASES DA EMPRESA', function () {
-    
+
     test('Deve disparar um erro quando o NIF inválido', function () {
         expect(() => {
             new Empresa({
@@ -22,7 +24,7 @@ describe('TESTES DE USECASES DA EMPRESA', function () {
                 endereco: faker.location.streetAddress(),
                 contactos: [1, 2].map(() => faker.helpers.replaceSymbols('+244 9## ### ###'))
             })
-        }).toThrowError(new NifInvalidException())
+        }).toThrowError(new NifInvalidException('nif', 'Nif Inválido'))
     })
     test('O NIF deve ser válido', function () {
         expect(() => {
@@ -33,13 +35,25 @@ describe('TESTES DE USECASES DA EMPRESA', function () {
                 endereco: faker.location.streetAddress(),
                 contactos: [1, 2].map(() => faker.helpers.replaceSymbols('+244 9## ### ###'))
             })
-        }).not.toThrowError(new NifInvalidException())
+        }).not.toThrowError(new NifInvalidException('nif', 'Nif Inválido'))
     })
     test('Deve criar empresa com sucesso.', async function () {
         const empresaRepository = {
             create: vi.fn().mockResolvedValue({ id: faker.string.uuid() })
         }
-        const builder = new CreateEmpresa(empresaRepository as any)
+        const funcionarioRepository = {
+            create: vi.fn().mockResolvedValue({ id: faker.string.uuid(), activo: true }),
+            update: vi.fn().mockResolvedValue({ id: faker.string.uuid(), activo: true })
+        }
+        const userRepository = {
+            create: vi.fn().mockResolvedValue({ id: faker.string.uuid(), })
+        }
+        const builder = new CreateEmpresaUseCase(
+            empresaRepository as any,
+            funcionarioRepository as any,
+            userRepository as any
+        )
+
         const empresaDto: TCreateEmpresaInputDTO = {
             nome: faker.company.name(),
             nif: generateNifEmpresa(),
@@ -47,7 +61,9 @@ describe('TESTES DE USECASES DA EMPRESA', function () {
             endereco: faker.location.streetAddress(),
             contactos: [1, 2].map(() => faker.helpers.replaceSymbols('+244 9## ### ###'))
         }
-        await expect(builder.execute(empresaDto)).resolves.toBe(undefined)
+        const response = builder.execute(empresaDto);
+
+        expect(response).resolves.toHaveProperty('id')
     })
 })
 
@@ -55,6 +71,9 @@ describe.skip('TESTES END-to-ENDD DA EMPRESA', function () {
 
     test('Deve criar uma empresa', async function () {
         const empresaRepositorySupabase = new EmpresaRepositorySupabase()
+        const funcionarioRepositorySupabase = new FuncionarioRepositorySupabase()
+        const userRepositorySupabase = new UserRepositorySupabase()
+
         const empresa = new Empresa({
             nome: faker.company.name(),
             nif: generateNifEmpresa(),
@@ -62,7 +81,11 @@ describe.skip('TESTES END-to-ENDD DA EMPRESA', function () {
             endereco: faker.location.streetAddress(),
             contactos: [1, 2].map(() => faker.helpers.replaceSymbols('+244 9## ### ###'))
         })
-        const creator = new CreateEmpresa(empresaRepositorySupabase)
+        const creator = new CreateEmpresaUseCase(
+            empresaRepositorySupabase,
+            funcionarioRepositorySupabase,
+            userRepositorySupabase
+        )
         const response = creator.execute({
             contactos: empresa.contactos,
             email: empresa.email.get(),
@@ -71,6 +94,7 @@ describe.skip('TESTES END-to-ENDD DA EMPRESA', function () {
             nome: empresa.nome,
             logoUrl: empresa.logoUrl
         })
-        expect(response).resolves.toBe(undefined)
+        console.debug(await response)
+        expect(response).resolves.toHaveProperty('id')
     })
 })

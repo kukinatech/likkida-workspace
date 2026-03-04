@@ -12,7 +12,8 @@
     "build": "bun build ./index.ts --outdir ./dist --target node --minify",
     "build:compile": "bun build ./index.ts --target node --compile",
     "build:watch": "bun build ./index.ts --outdir ./dist --target node --minify --watch",
-    "test": "vitest"
+    "test": "vitest",
+    "seed": "bun run src/databases/seeds.ts"
   },
   "dependencies": {
     "@likkida/shared": "workspace: *",
@@ -20,6 +21,7 @@
     "@types/cors": "^2.8.19",
     "@types/jsonwebtoken": "^9.0.10",
     "body-parser": "^2.2.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
@@ -29,6 +31,7 @@
   "devDependencies": {
     "@types/body-parser": "^1.19.6",
     "@types/bun": "latest",
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.3",
     "vitest": "^4.0.17"

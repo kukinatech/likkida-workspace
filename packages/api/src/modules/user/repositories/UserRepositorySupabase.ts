@@ -1,4 +1,4 @@
-import type { IUserRepository, TCreateUserInputDTO, TCreateUserOutputDTO } from "@likkida/shared";
+import { BaseErrorForm, type IUserRepository, type TCreateUserInputDTO, type TCreateUserOutputDTO } from "@likkida/shared";
 import supabase from "../../../databases/supabase";
 
 
@@ -7,17 +7,28 @@ export class UserRepositorySupabase implements IUserRepository {
         const { error, data } = await supabase
             .from("users")
             .select()
-            .eq("id", id);
+            .eq("id", id)
+
         if (error) { throw new Error(error.message) }
-        const [userFinded] = data
-        const response = userFinded ? {
-            id: userFinded.id,
-            email: userFinded.email,
-            username: userFinded.username
-        } : null
+        const [user] = data
+        const response = user ? {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            empresa: { id: user.empresa_id }
+        } as TCreateUserOutputDTO : null
+
         return response
     }
-    async create({ username, email, password }: TCreateUserInputDTO): Promise<TCreateUserOutputDTO> {
+    async create({ username, email, password, empresa }: TCreateUserInputDTO): Promise<TCreateUserOutputDTO> {
+
+        let { data: user, error } = await supabase.from('users')
+            .select('email')
+            .eq('email', email)
+            .maybeSingle()
+        if (error) throw new Error(error.message);
+
+        if (user) throw new BaseErrorForm('email', 'Email já existe usa outro email')
 
         const { data: authData, error: authError } = await supabase.auth
             .signUp({ email, password: password! });
@@ -26,7 +37,12 @@ export class UserRepositorySupabase implements IUserRepository {
 
         const { data: userData, error: userError } = await supabase
             .from("users")
-            .insert({ id: authData.user!.id, username, email })
+            .insert({
+                id: authData.user!.id,
+                username,
+                email,
+                empresa_id: empresa.id
+            })
             .select()
             .single()
 
@@ -35,6 +51,7 @@ export class UserRepositorySupabase implements IUserRepository {
             id: userData.id,
             email: userData.email,
             username: userData.username,
+            empresa: { id: empresa.id }
         }
     }
     async findByEmail(email: string): Promise<TCreateUserOutputDTO | null> {
@@ -45,13 +62,14 @@ export class UserRepositorySupabase implements IUserRepository {
 
         if (error) { throw new Error(error.message) }
 
-        const [userFinded] = data
+        const [user] = data
 
-        const response = userFinded ? {
-            id: userFinded.id,
-            email: userFinded.email,
-            username: userFinded.username
-        } : null
+        const response = user ? {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            empresa: { id: user.id }
+        } as TCreateUserOutputDTO : null
         return response
     }
 }

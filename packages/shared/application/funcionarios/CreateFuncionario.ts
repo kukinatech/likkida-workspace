@@ -5,11 +5,11 @@ import { RecordNotFoundException } from "../../domain/Exceptions/RecordNotFoundE
 
 export class CreateFuncionario {
     constructor(
-        private FuncionarioRepository: IFuncionarioRepository,
-        private EmpresaRepository: IEmpresaRepository
+        private funcionarioRepository: IFuncionarioRepository,
+        private empresaRepository: IEmpresaRepository
     ) { }
     async execute(data: TCreateFuncionarioInputDTO): Promise<void> {
-        const findEmpresa = await this.EmpresaRepository.findById(data.empresa.id)
+        const findEmpresa = await this.empresaRepository.findById(data.empresa.id)
         if (!findEmpresa) {
             throw new RecordNotFoundException('Empresa')
         }
@@ -19,6 +19,6 @@ export class CreateFuncionario {
             funcao: data.funcao,
             user: data.user ?? null
         })
-        await this.FuncionarioRepository.create(funcionario)
+        await this.funcionarioRepository.create(funcionario)
     }
 }
