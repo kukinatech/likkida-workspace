@@ -1,5 +1,5 @@
 // AUTO-GENERATED — não editar manualmente
-// gerado em: 2026-03-04T22:42:15.679Z
+// gerado em: 2026-03-05T10:07:30.937Z
 
 const routeModules: Record<string, () => Promise<any>> = {
   auth: () => import('../modules/auth/AuthRoutes.js'),

@@ -2,15 +2,16 @@ import { Box, Button, DialogContent, DialogTitle, Divider, Dropdown, Menu, MenuB
 import { AccountCircle as UserIcon, Logout as LogoutIcon, ArrowDropDown } from '@mui/icons-material';
 import Logo from "./Logo";
 import { useUserStore } from "../stores/useUserStore";
-import { Activity, useState } from "react";
+import { Activity, useState, type HTMLAttributes, type ReactNode } from "react";
 import type { IAuthProvider } from "@likkida/shared";
 import { AuthProviderAxios } from "../infra/providers/AuthProvider";
 import { useDesfragmentedToast } from "../hooks/useToast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-
+import NavigatorGuide from "./NavigatorGuide";
+type TProps = HTMLAttributes<HTMLDivElement> & { children?: ReactNode }
 const authProvider: IAuthProvider = new AuthProviderAxios()
-export default function TopBar() {
+export default function TopBar({ className, ...props }: TProps) {
   const user = useUserStore(state => state.user)
   const setUser = useUserStore(state => state.setUser)
   const isAuthenticated = useUserStore(state => state.isAuthenticated)
@@ -36,8 +37,13 @@ export default function TopBar() {
   return (
 
     <>
-      <Box className="px-6 flex items-center justify-between h-12 w-full bg-(--joy-palette-background-level1) border-b border-default">
-        <Logo />
+      <Box {...props} className={`${className} px-6 flex items-center justify-between h-12 w-full bg-(--joy-palette-background-level1) border-b border-default`}>
+        <div className="flex items-center">
+          <Logo labelVisible={false} />
+          <Activity mode={isAuthenticated() ? 'visible' : 'hidden'}>
+            <NavigatorGuide />
+          </Activity>
+        </div>
         <div>
           <Activity mode={isAuthenticated() ? 'visible' : 'hidden'}>
             <Dropdown>

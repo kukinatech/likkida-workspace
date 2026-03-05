@@ -1,21 +1,18 @@
-
-import App from "../App";
 import type { RouteObject } from "react-router";
-import CreateEmpresa from "../pages/empresa/CreateEmpresa";
-import Login from "../pages/login/Login";
+import { lazyImport } from "../utils/importLazy";
 
 export default [
   {
     path: '',
-    element: <App />,
+    lazy: lazyImport(import("../App")),
 
   },
   {
     path: 'login',
-    element: <Login />
+    lazy: lazyImport(import("../pages/login/Login"))
   },
   {
     path: 'registrar-empresa',
-    element: <CreateEmpresa />
+    element: lazyImport(import("../pages/empresa/CreateEmpresa"))
   },
 ] as RouteObject[]

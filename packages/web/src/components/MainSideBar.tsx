@@ -1,42 +1,63 @@
-import { Tooltip } from "@mui/joy";
+import { Button, Tooltip } from "@mui/joy";
 import type { HTMLAttributes, ReactNode } from "react";
 import { Article, Home, Sync, Inventory, PeopleAlt, Menu, Settings } from '@mui/icons-material';
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
+import { cn } from "../utils/tailwindMarge";
+import { useNavigatorBarStore } from "../stores/useNavigatorBarStore";
 
 type TProps = HTMLAttributes<HTMLDivElement> & { children?: ReactNode }
+
+const menuItems: {
+  tooltip: string,
+  pathname: string,
+  Icon: any
+}[] = [
+
+    {
+      Icon: Home,
+      pathname: "/dashboard",
+      tooltip: "Dashboard"
+    },
+    {
+      Icon: Article,
+      pathname: "/documentos",
+      tooltip: "Documentos",
+    },
+    {
+      Icon: Sync,
+      pathname: "/movimentos",
+      tooltip: "Fluxo de caixa"
+    },
+    {
+      Icon: Inventory,
+      pathname: "/artigos",
+      tooltip: "Artigos"
+    },
+    {
+      Icon: PeopleAlt,
+      pathname: "/clientes",
+      tooltip: "Clientes"
+    },
+  ]
 export default function MainSideBar({ className, ...props }: TProps) {
+
+  const { pathname } = useLocation()
+  const toogleNavigatorBar = useNavigatorBarStore(state => state.toogle)
   return (
     <aside {...props} className={`${className} flex flex-col`}>
-      <div className="flex-1 flex flex-col gap-y-6 w-full items-center overscroll-y-auto">
+      <div className="flex-1 flex flex-col  w-full items-center overscroll-y-auto">
         <Tooltip title="Ver mais opções" placement="right">
-          <Menu sx={{ fontSize: '50px', fill: '#FFF' }}></Menu>
+          <Button className="w-full flex justify-center py-3" onClick={toogleNavigatorBar} >
+            <Menu sx={{ fontSize: '50px', fill: '#FFF' }}></Menu>
+          </Button>
         </Tooltip>
-        <Tooltip title="Dashboard" placement="right">
-          <Link to="/dashboard">
-            <Home sx={{ fontSize: '50px', fill: '#FFF' }} ></Home>
-
-          </Link>
-        </Tooltip>
-        <Tooltip title="Documentos" placement="right">
-          <Link to="/documentos">
-            <Article sx={{ fontSize: '50px', fill: '#FFF' }}></Article>
-          </Link>
-        </Tooltip>
-        <Tooltip title="Fluxo de caixa" placement="right">
-          <Link to="/movimentos">
-            <Sync sx={{ fontSize: '50px', fill: '#FFF' }}></Sync>
-          </Link>
-        </Tooltip>
-        <Tooltip title="Produtos e Serviços" placement="right">
-          <Link to="/produtos-servicos">
-            <Inventory sx={{ fontSize: '50px', fill: '#FFF' }}></Inventory>
-          </Link>
-        </Tooltip>
-        <Tooltip title="Clientes" placement="right">
-          <Link to="/clientes">
-            <PeopleAlt sx={{ fontSize: '50px', fill: '#FFF' }}></PeopleAlt>
-          </Link>
-        </Tooltip>
+        {menuItems.map((menuItem) => (
+          <Tooltip title={menuItem.tooltip} placement="right" >
+            <Link to={menuItem.pathname} className={cn("hover:bg-(--joy-palette-primary-700) duration-300 w-full flex justify-center py-3", pathname.includes(menuItem.pathname) && 'bg-(--joy-palette-primary-700)')}>
+              <menuItem.Icon sx={{ fontSize: '50px', fill: '#FFF' }}></menuItem.Icon>
+            </Link>
+          </Tooltip>
+        ))}
       </div>
       <div className="flex gap-y-6 w-full justify-center py-3">
         <Tooltip title="configurações" placement="right">

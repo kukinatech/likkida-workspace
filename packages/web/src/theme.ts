@@ -34,7 +34,6 @@ export const theme = extendTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           fontSize: theme.vars.fontSize.md,
-        
           color: "#333"
         })
       }

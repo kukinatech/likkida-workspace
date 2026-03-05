@@ -11,7 +11,8 @@ const app = express()
 app.use(morgan('dev'))
 app.use(cors({
     origin: [config.FRONTEND_URL, 'http://localhost:4173'],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 }))
 app.use(cookieParser())
 app.use(bodyParser.json());
